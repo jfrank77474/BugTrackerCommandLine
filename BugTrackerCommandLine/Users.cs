@@ -94,6 +94,30 @@ namespace BugTrackerCommandLine
             Console.WriteLine("Enter the ID you want to modify:");
             string id = Console.ReadLine();
 
+            string name, display_name, email, password;
+            bool is_active;
+            Console.WriteLine($"Enter new User Name for ID {id}:");
+            name = Console.ReadLine();
+
+            Console.WriteLine($"Enter new User Display Namefor ID {id}:");
+            display_name = Console.ReadLine();
+
+            Console.WriteLine($"Enter new Email for ID {id}:");
+            email = Console.ReadLine();
+
+            Console.WriteLine($"Enter new Password for ID {id}:");
+            password = Console.ReadLine();
+
+            Console.WriteLine($"Is {id} still Active? (y/n)");
+            if (Console.ReadLine().ToLower() == "y")
+                is_active = true;
+            else
+                is_active = false;
+
+            sql = $"update Users set user_name='{name}', display_name='{display_name}', email='{email}', password='{password}', is_active={is_active}";
+            data.ConnectToDatabase();
+            data.RunSQL(sql);
+
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("");
         }

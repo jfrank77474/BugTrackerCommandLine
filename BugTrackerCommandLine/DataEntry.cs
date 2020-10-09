@@ -1,6 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.IO;
+using System.Reflection;
+using System.Resources;
 using MySql.Data.MySqlClient;
 
 namespace BugTrackerCommandLine
@@ -15,7 +18,9 @@ namespace BugTrackerCommandLine
 
         private void Initialize()
         {
-            string cs = "server=10.0.0.161;port=3306;database=BugTracker;uid=bugtracker;password=bugtracker;";
+            ResourceManager rm = new ResourceManager("BugTrackerCommandLine.Properties.serverInfo", Assembly.GetExecutingAssembly());
+
+            string cs = $"server={rm.GetString("server")};port={rm.GetString("port")};database={rm.GetString("db")};uid={rm.GetString("uid")};password={rm.GetString("pw")};";
             connection = new MySqlConnection(cs);
         }
 

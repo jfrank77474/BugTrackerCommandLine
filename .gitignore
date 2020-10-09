@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/BugTrackerCommandLine/Properties/serverInfo.resx
+/BugTrackerCommandLine/Properties/serverInfo.Designer.cs

@@ -40,7 +40,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("Create a new User");
 
             string name, display_name, email, password;
-            //bool is_active;
+
             Console.WriteLine("Enter User Name:");
             name = Console.ReadLine();
 
@@ -52,12 +52,6 @@ namespace BugTrackerCommandLine
 
             Console.WriteLine("Enter Password:");
             password = Console.ReadLine();
-
-            //Console.WriteLine("Is Active? (y/n)");
-            //if (Console.ReadLine().ToLower() == "y")
-            //    is_active = true;
-            //else
-            //    is_active = false;
 
             string sql = $"INSERT INTO Users (user_name, display_name, email, password, is_active) VALUES  ('{name}', '{display_name}', '{email}', '{password}', 1)";
 

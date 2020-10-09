@@ -9,4 +9,19 @@
     <PackageReference Include="MySql.Data" Version="8.0.21" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Properties\serverInfo.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>serverInfo.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\serverInfo.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>serverInfo.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

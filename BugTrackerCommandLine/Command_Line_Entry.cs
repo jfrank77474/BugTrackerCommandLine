@@ -19,7 +19,7 @@ namespace BugTrackerCommandLine
             //}
 
             string userInput = "";
-            while(userInput.Trim(' ') != "0")
+            while (userInput.Trim(' ') != "0")
             {
                 Console.WriteLine("-----------------------------------------------");
                 Console.WriteLine("Bug Tracker Command Line");
@@ -52,34 +52,38 @@ namespace BugTrackerCommandLine
                     Console.WriteLine("List Ticket");
                     break;
                 case "4":
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("Manage Users.");
-                    Console.WriteLine("1) List Users");
-                    Console.WriteLine("2) Create a new User");
-                    Console.WriteLine("3) Modify a User");
-                    Console.WriteLine("4) Delete a User");
-                    Console.WriteLine("0) Previous Menu");
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("");
-
-                    string userInput = Console.ReadLine();
-
-                    switch(userInput)
+                    string userInput = "";
+                    while (userInput.Trim(' ') != "0")
                     {
-                        case "1":
-                            Users.ListUsers();
-                            break;
-                        case "2":
-                            Users.CreateUser();
-                            break;
-                        case "3":
-                            Users.ModifyUser();
-                            break;
-                        case "4":
-                            Users.DeleteUser();
-                            break;
-                        case "0":
-                            break;
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.WriteLine("Manage Users.");
+                        Console.WriteLine("1) List Users");
+                        Console.WriteLine("2) Create a new User");
+                        Console.WriteLine("3) Modify a User");
+                        Console.WriteLine("4) Delete a User");
+                        Console.WriteLine("0) Previous Menu");
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.WriteLine("");
+
+                        userInput = Console.ReadLine();
+
+                        switch (userInput)
+                        {
+                            case "1":
+                                Users.ListUsers();
+                                break;
+                            case "2":
+                                Users.CreateUser();
+                                break;
+                            case "3":
+                                Users.ModifyUser();
+                                break;
+                            case "4":
+                                Users.DeleteUser();
+                                break;
+                            case "0":
+                                break;
+                        }
                     }
 
                     break;

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Data;
-using System.IO;
 using System.Reflection;
 using System.Resources;
 using MySql.Data.MySqlClient;
@@ -16,11 +14,17 @@ namespace BugTrackerCommandLine
             Initialize();
         }
 
-        private void Initialize()
+        public string getResource(string key)
         {
             ResourceManager rm = new ResourceManager("BugTrackerCommandLine.Properties.serverInfo", Assembly.GetExecutingAssembly());
 
-            string cs = $"server={rm.GetString("server")};port={rm.GetString("port")};database={rm.GetString("db")};uid={rm.GetString("uid")};password={rm.GetString("pw")};";
+            return rm.GetString(key);
+        }
+
+        private void Initialize()
+        {
+
+            string cs = $"server={getResource("server")};port={getResource("port")};database={getResource("db")};uid={getResource("uid")};password={getResource("pw")};";
             connection = new MySqlConnection(cs);
         }
 

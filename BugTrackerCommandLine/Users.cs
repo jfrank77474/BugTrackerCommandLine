@@ -45,10 +45,14 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Create a new User");
 
-            string name, display_name, email, password;
+            string name = "", display_name, email, password;
 
-            Console.WriteLine("Enter User Name:");
-            name = Console.ReadLine();
+            DataEntry data = new DataEntry();
+            do
+            {
+                Console.WriteLine("Enter User Name:");
+                name = Console.ReadLine();
+            } while (DoesUserExist(name));
 
             Console.WriteLine("Enter User Display Name:");
             display_name = Console.ReadLine();
@@ -59,7 +63,6 @@ namespace BugTrackerCommandLine
             Console.WriteLine("Enter Password:");
             password = Console.ReadLine();
 
-            DataEntry data = new DataEntry();
             string encryptedPw = EncryptionDecryptionService.Encrypt(data.getResource("key"), password);
 
             string sql = $"INSERT INTO Users (user_name, display_name, email, password, is_active) VALUES  ('{name}', '{display_name}', '{email}', '{encryptedPw}', 1)";
@@ -123,7 +126,7 @@ namespace BugTrackerCommandLine
             else
                 is_active = false;
 
-            sql = $"update Users set user_name='{name}', display_name='{display_name}', email='{email}', password='{encryptedPw}', is_active={is_active}";
+            sql = $"update Users set user_name='{name}', display_name='{display_name}', email='{email}', password='{encryptedPw}', is_active={is_active} WHERE id = {id}";
             data.ConnectToDatabase();
             data.RunSQL(sql);
 
@@ -175,6 +178,26 @@ namespace BugTrackerCommandLine
 
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("");
+        }
+
+        private static bool DoesUserExist(string name)
+        {
+
+            var sql = $"select user_name from Users WHERE user_name = '{name}';";
+
+            DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            if (results.Rows.Count > 0)
+            {
+                Console.WriteLine("User already Exists");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

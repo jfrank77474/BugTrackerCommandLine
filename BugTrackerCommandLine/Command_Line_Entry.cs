@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Renci.SshNet;
+using System;
 
 namespace BugTrackerCommandLine
 {
@@ -6,17 +7,39 @@ namespace BugTrackerCommandLine
     {
         static void Main(string[] args)
         {
-            // THis is an example on how to connect to db and select from table
-            //var sql = "select * from Boards;";
+            bool is_valid = false;
+            do
+            {
+                Console.WriteLine("Company?");
+                string c = Console.ReadLine();
 
-            //DataEntry data = new DataEntry();
-            //data.ConnectToDatabase();
-            //var results = data.RunSQL(sql);
+                Console.WriteLine("User Name?");
+                string u = Console.ReadLine();
 
-            //foreach(DataRow row in results.Rows)
-            //{
-            //    Console.WriteLine(row.Field<int>("id") + " " + row.Field<string>("default_boards"));
-            //}
+                Console.WriteLine("Password");
+                string p = "";
+
+                //Hides the plain text password from view
+                ConsoleKey key;
+                do
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                    key = keyInfo.Key;
+
+                    if (key == ConsoleKey.Backspace && p.Length > 0)
+                    {
+                        Console.Write("\b \b");
+                        p = p[0..^1];
+                    }
+                    else if (!char.IsControl(keyInfo.KeyChar))
+                    {
+                        Console.Write("*");
+                        p += keyInfo.KeyChar;
+                    }
+                } while (key != ConsoleKey.Enter);
+
+                is_valid = Company.CheckLogin(c, u, p);
+            } while(!is_valid);
 
             string userInput = "";
             while (userInput.Trim(' ') != "0")
@@ -85,10 +108,41 @@ namespace BugTrackerCommandLine
                                 break;
                         }
                     }
-
                     break;
                 case "5":
-                    Console.WriteLine("Create Company");
+                    userInput = "";
+                    while (userInput.Trim(' ') != "0")
+                    {
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.WriteLine("Manage Companies.");
+                        Console.WriteLine("1) List Companies");
+                        Console.WriteLine("2) Create a new Company");
+                        Console.WriteLine("3) Modify a Company");
+                        Console.WriteLine("4) Delete a Company");
+                        Console.WriteLine("0) Previous Menu");
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.WriteLine("");
+
+                        userInput = Console.ReadLine();
+
+                        switch (userInput)
+                        {
+                            case "1":
+                                Company.ListCompany();
+                                break;
+                            case "2":
+                                Company.CreateCompany();
+                                break;
+                            case "3":
+                                Company.ModifyCompany();
+                                break;
+                            case "4":
+                                Company.DeleteCompany();
+                                break;
+                            case "0":
+                                break;
+                        }
+                    }
                     break;
                 default:
                     Console.WriteLine("Select one of the menu items");

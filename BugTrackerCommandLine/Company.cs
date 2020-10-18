@@ -3,13 +3,57 @@ using System.Data;
 
 namespace BugTrackerCommandLine
 {
-    // @TODO need to create function for listing, modifying, and deleting Companies
     public class Company
     {
-        public static bool CheckLogin(string company, string user, string password)
+        public static void CompanyMenu()
         {
-            Console.WriteLine("\n-----------------------------------------------");
-            string sql = $"SELECT id FROM Company WHERE company_name = '{company}'";
+            string userInput = "";
+            while (userInput.Trim(' ') != "0")
+            {
+                Console.WriteLine("-----------------------------------------------");
+                Console.WriteLine("Manage Companies.");
+                Console.WriteLine("1) List Companies");
+                Console.WriteLine("2) Create a new Company");
+                Console.WriteLine("3) Modify a Company");
+                Console.WriteLine("4) Delete a Company");
+                Console.WriteLine("0) Previous Menu");
+                Console.WriteLine("-----------------------------------------------");
+                Console.WriteLine("");
+
+                userInput = Console.ReadLine();
+                switch (userInput)
+                {
+                    case "1":
+                        ListCompany();
+                        break;
+                    case "2":
+                        CreateCompany();
+                        break;
+                    case "3":
+                        ModifyCompany();
+                        break;
+                    case "4":
+                        DeleteCompany();
+                        break;
+                    case "0":
+                        CurrentMenu.currentMenu.Pop();
+                        break;
+                }
+            }
+        }
+
+        public static void NewCompany()
+        {
+            CreateCompany();
+            CurrentMenu.currentMenu.Pop();
+        }
+
+        private static void ListCompany()
+        {
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("List Companies");
+
+            var sql = "select company_name, is_active from Company;";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -17,62 +61,26 @@ namespace BugTrackerCommandLine
 
             if (results.Rows.Count > 0)
             {
-                int id = 0;
                 foreach (DataRow row in results.Rows)
                 {
-                    id = row.Field<int>("id");
-                    break;
-                }
-
-                sql = $"SELECT user_name, password FROM Users WHERE company_id = '{id}' AND user_name = '{user}'";
-                data.ConnectToDatabase();
-                var user_check = data.RunSQL(sql);
-
-                if (user_check.Rows.Count > 0)
-                {
-                    string encryptedPW = "";
-                    foreach (DataRow row in user_check.Rows)
-                    {
-                        encryptedPW = row.Field<string>("password");
-                    }
-
-                    if (EncryptionDecryptionService.Encrypt(data.getResource("key"), password) == encryptedPW)
-                        return true;
-                    else
-                    {
-                        Console.WriteLine("Wrong Password");
-                        Console.WriteLine("-----------------------------------------------");
-                        Console.WriteLine("");
-                        return false;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No User with that User Name. Please contact administrator.");
+                    Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
+                    Console.WriteLine("Is Active: " + row.Field<bool>("is_active"));
                     Console.WriteLine("-----------------------------------------------");
                     Console.WriteLine("");
-                    return false;
                 }
             }
             else
-            {
-                // No company found need to create new one
-                Console.WriteLine("");
-                Console.WriteLine("-----------------------------------------------");
-                Console.WriteLine("No Company Found with that name would you like to create one? (y/n)");
-                string answer = Console.ReadLine();
+                Console.WriteLine("No Companies Found");
 
-                if (answer.ToLower() == "y")
-                    CreateCompany();
-            }
-            return false;
+            Console.WriteLine("Press Any Key to Continue");
+            Console.ReadKey();
+
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("");
         }
 
-        public static void ListCompany()
-        {
-        }
-
-        public static void CreateCompany()
+        private static void CreateCompany()
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Create a new Company");
@@ -82,9 +90,9 @@ namespace BugTrackerCommandLine
             DataEntry data = new DataEntry();
             do
             {
-                Console.WriteLine("Enter User Name:");
+                Console.WriteLine("Enter Company Name:");
                 name = Console.ReadLine();
-            } while (DoesUserExist(name));
+            } while (DoesCompanyExist(name));
 
             string sql = $"INSERT INTO Company (company_name, is_active) VALUES  ('{name}', 1)";
 
@@ -95,15 +103,99 @@ namespace BugTrackerCommandLine
             Console.WriteLine("");
         }
 
-        public static void ModifyCompany()
+        private static void ModifyCompany()
         {
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("Modify a Company");
+
+            var sql = "select id, user_name from Company;";
+
+            DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            if (results.Rows.Count > 0)
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("ID: " + row.Field<int>("id"));
+                    Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
+                    Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("");
+                }
+            }
+            else
+                Console.WriteLine("No Companies Found");
+
+            Console.WriteLine("Enter the ID you want to modify:");
+            string id = Console.ReadLine();
+
+            string name;
+            bool is_active;
+            Console.WriteLine($"Enter new Company Name for ID {id}:");
+            name = Console.ReadLine();
+
+            Console.WriteLine($"Is {id} still Active? (y/n)");
+            if (Console.ReadLine().ToLower() == "y")
+                is_active = true;
+            else
+                is_active = false;
+
+            sql = $"update Company set company_name='{name}', is_active={is_active} WHERE id = {id}";
+            data.ConnectToDatabase();
+            data.RunSQL(sql);
+
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("");
         }
 
-        public static void DeleteCompany()
+        private static void DeleteCompany()
         {
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("Delete a Company");
+
+            var sql = "select id, company_name from Company;";
+
+            DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            if (results.Rows.Count > 0)
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("ID: " + row.Field<int>("id"));
+                    Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
+                    Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("");
+                }
+
+                Console.WriteLine("Enter the ID you want to delete:");
+                string id = Console.ReadLine();
+
+                Console.WriteLine($"Are you sure you would like to delete ID {id}? (y/n)");
+                string answer = Console.ReadLine();
+
+                if (answer.ToLower() == "y")
+                {
+                    sql = $"DELETE FROM Company WHERE id = {id}";
+                    data.ConnectToDatabase();
+                    data.RunSQL(sql);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No Companies Found");
+                Console.ReadKey();
+            }
+
+            Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine("");
         }
 
-        private static bool DoesUserExist(string name)
+        public static bool DoesCompanyExist(string name)
         {
 
             var sql = $"select company_name from Company WHERE company_name = '{name}';";
@@ -113,12 +205,7 @@ namespace BugTrackerCommandLine
             var results = data.RunSQL(sql);
 
             if (results.Rows.Count > 0)
-            {
-                Console.WriteLine("Company already Exists");
-                Console.WriteLine("Press any key to continue");
-                Console.ReadKey();
                 return true;
-            }
             else
                 return false;
         }

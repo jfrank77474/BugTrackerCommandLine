@@ -5,7 +5,51 @@ namespace BugTrackerCommandLine
 {
     public class Users
     {
-        public static void ListUsers()
+        public static void UserMenu()
+        {
+            string userInput = "";
+            while (userInput.Trim(' ') != "0")
+            {
+                Console.WriteLine("-----------------------------------------------");
+                Console.WriteLine("Manage Users.");
+                Console.WriteLine("1) List Users");
+                Console.WriteLine("2) Create a new User");
+                Console.WriteLine("3) Modify a User");
+                Console.WriteLine("4) Delete a User");
+                Console.WriteLine("0) Previous Menu");
+                Console.WriteLine("-----------------------------------------------");
+                Console.WriteLine("");
+
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        ListUsers();
+                        break;
+                    case "2":
+                        CreateUser();
+                        break;
+                    case "3":
+                        ModifyUser();
+                        break;
+                    case "4":
+                        DeleteUser();
+                        break;
+                    case "0":
+                        CurrentMenu.currentMenu.Pop();
+                        break;
+                }
+            }
+        }
+        
+        public static void NewUser()
+        {
+            CreateUser();
+            CurrentMenu.currentMenu.Pop();
+        }
+
+        private static void ListUsers()
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("List Users");
@@ -40,7 +84,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("");
         }
 
-        public static void CreateUser()
+        private static void CreateUser()
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Create a new User");
@@ -74,7 +118,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("");
         }
 
-        public static void ModifyUser()
+        private static void ModifyUser()
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Modify a User");
@@ -134,7 +178,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("");
         }
 
-        public static void DeleteUser()
+        private static void DeleteUser()
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Delete a User");
@@ -180,7 +224,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("");
         }
 
-        private static bool DoesUserExist(string name)
+        public static bool DoesUserExist(string name)
         {
 
             var sql = $"select user_name from Users WHERE user_name = '{name}';";
@@ -190,12 +234,7 @@ namespace BugTrackerCommandLine
             var results = data.RunSQL(sql);
 
             if (results.Rows.Count > 0)
-            {
-                Console.WriteLine("User already Exists");
-                Console.WriteLine("Press any key to continue");
-                Console.ReadKey();
                 return true;
-            }
             else
                 return false;
         }

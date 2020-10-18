@@ -54,7 +54,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("List Users");
 
-            var sql = "select user_name, display_name, email, password, is_active from Users;";
+            var sql = "select id, user_name, display_name, email, is_active from Users;";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -65,23 +65,20 @@ namespace BugTrackerCommandLine
                 foreach (DataRow row in results.Rows)
                 {
                     Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("Id: " + row.Field<int>("id"));
                     Console.WriteLine("User Name: " + row.Field<string>("user_name"));
                     Console.WriteLine("Display Name: " + row.Field<string>("display_name"));
                     Console.WriteLine("Email: " + row.Field<string>("email"));
-                    Console.WriteLine("Password: " + row.Field<string>("password"));
                     Console.WriteLine("Is Active: " + row.Field<bool>("is_active"));
                     Console.WriteLine("-----------------------------------------------");
                     Console.WriteLine("");
                 }
             }
             else
+            {
                 Console.WriteLine("No Users Found");
-
-            Console.WriteLine("Press Any Key to Continue");
-            Console.ReadKey();
-
-            Console.WriteLine("-----------------------------------------------");
-            Console.WriteLine("");
+                UserMenu();
+            }
         }
 
         private static void CreateUser()
@@ -123,41 +120,51 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Modify a User");
 
-            var sql = "select id, user_name, display_name, email from Users;";
+            ListUsers();
+
+            Console.WriteLine("Enter the ID you want to modify:");
+            string id = Console.ReadLine();
+
+            string sql = $"select id, user_name, display_name, email, is_active from Users WHERE id = {id}";
+            Console.WriteLine(sql);
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
             var results = data.RunSQL(sql);
 
+            string old_name = "", old_display_name = "", old_email = "";
             if (results.Rows.Count > 0)
             {
                 foreach (DataRow row in results.Rows)
                 {
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("ID: " + row.Field<int>("id"));
-                    Console.WriteLine("User Name: " + row.Field<string>("user_name"));
-                    Console.WriteLine("Display Name: " + row.Field<string>("display_name"));
-                    Console.WriteLine("Email: " + row.Field<string>("email"));
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("");
+                    old_name = row.Field<string>("user_name");
+                    old_display_name = row.Field<string>("display_name");
+                    old_email = row.Field<string>("email");
                 }
             }
-            else
-                Console.WriteLine("No Users Found");
-
-            Console.WriteLine("Enter the ID you want to modify:");
-            string id = Console.ReadLine();
 
             string name, display_name, email, password;
             bool is_active;
-            Console.WriteLine($"Enter new User Name for ID {id}:");
+            Console.WriteLine($"Enter new User Name for ID {id} blank to keep the same:");
+            Console.WriteLine($"Old User Name: {old_name}");
             name = Console.ReadLine();
 
-            Console.WriteLine($"Enter new User Display Namefor ID {id}:");
+            if (name.Trim() == "")
+                name = old_name;
+
+            Console.WriteLine($"Enter new User Display Name for ID {id} blank to keep the same:");
+            Console.WriteLine($"Old User Display Name: {old_display_name}");
             display_name = Console.ReadLine();
 
-            Console.WriteLine($"Enter new Email for ID {id}:");
+            if (display_name.Trim() == "")
+                display_name = old_display_name;
+
+            Console.WriteLine($"Enter new Email for ID {id} blank to keep the same:");
+            Console.WriteLine($"Old Email: {old_email}");
             email = Console.ReadLine();
+
+            if (email.Trim() == "")
+                email = old_email;
 
             Console.WriteLine($"Enter new Password for ID {id}:");
             password = Console.ReadLine();

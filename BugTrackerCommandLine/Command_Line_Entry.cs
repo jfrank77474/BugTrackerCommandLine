@@ -14,8 +14,8 @@ namespace BugTrackerCommandLine
         Company,
         NewCompany,
         List,
-        Status,
-        New
+        NewTicket,
+        Status
     };
 
     public class CurrentMenu
@@ -71,11 +71,12 @@ namespace BugTrackerCommandLine
 
             switch (userInput)
             {
+                // @TODO Get Tickets working
                 case "1":
                     Console.WriteLine("New Ticket");
                     break;
                 case "2":
-                    Console.WriteLine("Change Ticket");
+                    Console.WriteLine("Change Ticket Status");
                     break;
                 case "3":
                     Console.WriteLine("List Ticket");

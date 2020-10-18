@@ -53,7 +53,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("List Companies");
 
-            var sql = "select company_name, is_active from Company;";
+            var sql = "select id, company_name, is_active from Company;";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -64,6 +64,7 @@ namespace BugTrackerCommandLine
                 foreach (DataRow row in results.Rows)
                 {
                     Console.WriteLine("-----------------------------------------------");
+                    Console.WriteLine("ID: " + row.Field<int>("id"));
                     Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
                     Console.WriteLine("Is Active: " + row.Field<bool>("is_active"));
                     Console.WriteLine("-----------------------------------------------");
@@ -71,13 +72,10 @@ namespace BugTrackerCommandLine
                 }
             }
             else
+            {
                 Console.WriteLine("No Companies Found");
-
-            Console.WriteLine("Press Any Key to Continue");
-            Console.ReadKey();
-
-            Console.WriteLine("-----------------------------------------------");
-            Console.WriteLine("");
+                CompanyMenu();
+            }
         }
 
         private static void CreateCompany()
@@ -108,33 +106,34 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Modify a Company");
 
-            var sql = "select id, user_name from Company;";
+            ListCompany();
+
+            Console.WriteLine("Enter the ID you want to modify:");
+            string id = Console.ReadLine();
+
+            var sql = $"select id, company_name FROM Company WHERE id = {id}";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
             var results = data.RunSQL(sql);
 
+            string old_company_name = "";
             if (results.Rows.Count > 0)
             {
                 foreach (DataRow row in results.Rows)
                 {
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("ID: " + row.Field<int>("id"));
-                    Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("");
+                    old_company_name = row.Field<string>("company_name");
                 }
             }
-            else
-                Console.WriteLine("No Companies Found");
-
-            Console.WriteLine("Enter the ID you want to modify:");
-            string id = Console.ReadLine();
 
             string name;
             bool is_active;
-            Console.WriteLine($"Enter new Company Name for ID {id}:");
+            Console.WriteLine($"Enter new Company Name for ID {id} blank to keep the same:");
+            Console.WriteLine($"Old Company Name: {old_company_name}");
             name = Console.ReadLine();
+
+            if (name.Trim() == "")
+                name = old_company_name;
 
             Console.WriteLine($"Is {id} still Active? (y/n)");
             if (Console.ReadLine().ToLower() == "y")

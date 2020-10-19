@@ -37,7 +37,7 @@ namespace BugTrackerCommandLine
                         DeleteUser();
                         break;
                     case "0":
-                        CurrentMenu.currentMenu.Pop();
+                        Globals.currentMenu.Pop();
                         break;
                 }
             }
@@ -46,7 +46,7 @@ namespace BugTrackerCommandLine
         public static void NewUser()
         {
             CreateUser();
-            CurrentMenu.currentMenu.Pop();
+            Globals.currentMenu.Pop();
         }
 
         private static void ListUsers()
@@ -190,41 +190,21 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Delete a User");
 
-            var sql = "select id, user_name, display_name from Users;";
+            ListUsers();
 
-            DataEntry data = new DataEntry();
-            data.ConnectToDatabase();
-            var results = data.RunSQL(sql);
+            Console.WriteLine("Enter the ID you want to delete:");
+            string id = Console.ReadLine();
 
-            if (results.Rows.Count > 0)
+            Console.WriteLine($"Are you sure you would like to delete ID {id}? (y/n)");
+            string answer = Console.ReadLine();
+
+            if (answer.ToLower() == "y")
             {
-                foreach (DataRow row in results.Rows)
-                {
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("ID: " + row.Field<int>("id"));
-                    Console.WriteLine("User Name: " + row.Field<string>("user_name"));
-                    Console.WriteLine("Display Name: " + row.Field<string>("display_name"));
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("");
-                }
+                string sql = $"DELETE FROM Users WHERE id = {id}";
 
-                Console.WriteLine("Enter the ID you want to delete:");
-                string id = Console.ReadLine();
-
-                Console.WriteLine($"Are you sure you would like to delete ID {id}? (y/n)");
-                string answer = Console.ReadLine();
-
-                if (answer.ToLower() == "y")
-                {
-                    sql = $"DELETE FROM Users WHERE id = {id}";
-                    data.ConnectToDatabase();
-                    data.RunSQL(sql);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No Users Found");
-                Console.ReadKey();
+                DataEntry data = new DataEntry();
+                data.ConnectToDatabase();
+                data.RunSQL(sql);
             }
 
             Console.WriteLine("-----------------------------------------------");
@@ -233,7 +213,6 @@ namespace BugTrackerCommandLine
 
         public static bool DoesUserExist(string name)
         {
-
             var sql = $"select user_name from Users WHERE user_name = '{name}';";
 
             DataEntry data = new DataEntry();

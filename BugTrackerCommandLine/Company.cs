@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 
+// @TODO change the company/project globals to work with resources instead
 namespace BugTrackerCommandLine
 {
     public class Company
@@ -36,7 +37,7 @@ namespace BugTrackerCommandLine
                         DeleteCompany();
                         break;
                     case "0":
-                        CurrentMenu.currentMenu.Pop();
+                        Globals.currentMenu.Pop();
                         break;
                 }
             }
@@ -45,7 +46,7 @@ namespace BugTrackerCommandLine
         public static void NewCompany()
         {
             CreateCompany();
-            CurrentMenu.currentMenu.Pop();
+            Globals.currentMenu.Pop();
         }
 
         private static void ListCompany()
@@ -154,40 +155,22 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Delete a Company");
 
-            var sql = "select id, company_name from Company;";
+            ListCompany();
 
-            DataEntry data = new DataEntry();
-            data.ConnectToDatabase();
-            var results = data.RunSQL(sql);
+            Console.WriteLine("Enter the ID you want to delete:");
+            string id = Console.ReadLine();
 
-            if (results.Rows.Count > 0)
+            Console.WriteLine($"Are you sure you would like to delete ID {id}? (y/n)");
+            string answer = Console.ReadLine();
+
+            if (answer.ToLower() == "y")
             {
-                foreach (DataRow row in results.Rows)
-                {
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("ID: " + row.Field<int>("id"));
-                    Console.WriteLine("Company Name: " + row.Field<string>("company_name"));
-                    Console.WriteLine("-----------------------------------------------");
-                    Console.WriteLine("");
-                }
 
-                Console.WriteLine("Enter the ID you want to delete:");
-                string id = Console.ReadLine();
+                string sql = $"DELETE FROM Company WHERE id = {id}";
 
-                Console.WriteLine($"Are you sure you would like to delete ID {id}? (y/n)");
-                string answer = Console.ReadLine();
-
-                if (answer.ToLower() == "y")
-                {
-                    sql = $"DELETE FROM Company WHERE id = {id}";
-                    data.ConnectToDatabase();
-                    data.RunSQL(sql);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No Companies Found");
-                Console.ReadKey();
+                DataEntry data = new DataEntry();
+                data.ConnectToDatabase();
+                data.RunSQL(sql);
             }
 
             Console.WriteLine("-----------------------------------------------");

@@ -9,6 +9,7 @@ namespace BugTrackerCommandLine
     {
         Login,
         Main,
+        Project,
         User,
         NewUser,
         Company,
@@ -18,25 +19,33 @@ namespace BugTrackerCommandLine
         Status
     };
 
-    public class CurrentMenu
+    public class Globals
     {
         public static Stack<Menus> currentMenu = new Stack<Menus>();
+        public static string currentProject = null;
+        public static string currentCompany = null;
     }
 
+    // @TODO set up company for user/projects/tickets
+    //       tickets created, projects created, users created should only
+    //       be in the currently logged in company
     class Command_Line_Entry
     {
         static void Main(string[] args)
         {
-            CurrentMenu.currentMenu.Push(Menus.Login);
+            Globals.currentMenu.Push(Menus.Login);
             while(true)
             {
-                switch(CurrentMenu.currentMenu.FirstOrDefault())
+                switch(Globals.currentMenu.FirstOrDefault())
                 {
                     case Menus.Login:
                         Login();
                         break;
                     case Menus.Main:
                         MainMenu();
+                        break;
+                    case Menus.Project:
+                        Project.ProjectMenu();
                         break;
                     case Menus.User:
                         Users.UserMenu();
@@ -50,6 +59,15 @@ namespace BugTrackerCommandLine
                     case Menus.NewCompany:
                         Company.NewCompany();
                         break;
+                    case Menus.NewTicket:
+                        Ticket.CreateTicket();
+                        break;
+                    case Menus.Status:
+                        Ticket.ChangeTicketStatus();
+                        break;
+                    case Menus.List:
+                        Ticket.ListTickets();
+                        break;
                 }
             }
         }
@@ -57,12 +75,17 @@ namespace BugTrackerCommandLine
         static void MainMenu()
         {
             Console.WriteLine("-----------------------------------------------");
+            Console.WriteLine($"Company: {Globals.currentCompany}");
+            if(Globals.currentProject != null)
+                Console.WriteLine($"Project: {Globals.currentProject}");
+            Console.WriteLine("");
             Console.WriteLine("Bug Tracker Command Line");
             Console.WriteLine("1) Create a new ticket.");
             Console.WriteLine("2) Change a Ticket Status.");
             Console.WriteLine("3) List all tickets.");
-            Console.WriteLine("4) Manage Users.");
-            Console.WriteLine("5) Manage Companies.");
+            Console.WriteLine("4) Manage Projects.");
+            Console.WriteLine("5) Manage Users.");
+            Console.WriteLine("6) Manage Companies.");
             Console.WriteLine("0) Exit.");
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("");
@@ -73,22 +96,25 @@ namespace BugTrackerCommandLine
             {
                 // @TODO Get Tickets working
                 case "1":
-                    Console.WriteLine("New Ticket");
+                    Globals.currentMenu.Push(Menus.NewTicket);
                     break;
                 case "2":
-                    Console.WriteLine("Change Ticket Status");
+                    Globals.currentMenu.Push(Menus.Status);
                     break;
                 case "3":
-                    Console.WriteLine("List Ticket");
+                    Globals.currentMenu.Push(Menus.List);
                     break;
                 case "4":
-                    CurrentMenu.currentMenu.Push(Menus.User);
+                    Globals.currentMenu.Push(Menus.Project);
                     break;
                 case "5":
-                    CurrentMenu.currentMenu.Push(Menus.Company);
+                    Globals.currentMenu.Push(Menus.User);
+                    break;
+                case "6":
+                    Globals.currentMenu.Push(Menus.Company);
                     break;
                 case "0":
-                    CurrentMenu.currentMenu.Pop();
+                    Globals.currentMenu.Pop();
                     break;
                 default:
                     Console.WriteLine("Select one of the menu items");
@@ -109,7 +135,7 @@ namespace BugTrackerCommandLine
                 string answer = Console.ReadLine();
 
                 if (answer.ToLower() == "y")
-                    CurrentMenu.currentMenu.Push(Menus.NewCompany);
+                    Globals.currentMenu.Push(Menus.NewCompany);
                 return;
             }
 
@@ -123,7 +149,7 @@ namespace BugTrackerCommandLine
                 string answer = Console.ReadLine();
 
                 if (answer.ToLower() == "y")
-                    CurrentMenu.currentMenu.Push(Menus.NewUser);
+                    Globals.currentMenu.Push(Menus.NewUser);
                 return;
             }
 
@@ -165,7 +191,10 @@ namespace BugTrackerCommandLine
 
                 // @TODO change this to use the password as the key and have it encrypted to the current key
                 if (EncryptionDecryptionService.Encrypt(data.getResource("key"), p) == encryptedPW)
-                    CurrentMenu.currentMenu.Push(Menus.Main);
+                {
+                    Globals.currentCompany = c;
+                    Globals.currentMenu.Push(Menus.Main);
+                }
                 else
                 {
                     Console.WriteLine("Wrong Password");

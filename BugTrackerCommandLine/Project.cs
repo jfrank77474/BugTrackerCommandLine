@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 
-// @TODO Change projects to be based on current company
-// @TODO User should have the default project that loads when logged in
 namespace BugTrackerCommandLine
 {
     class Project
@@ -46,7 +44,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("List Projects");
 
-            var sql = "select id, project_name, is_active from Project;";
+            var sql = $"select P.id, P.project_name, P.is_active from Project P, Company C WHERE P.company_id = C.id AND C.company_name = '{Globals.currentCompany}';";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -76,16 +74,28 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Create a new Project");
 
-            string name = "";
-
+            string sql = $"SELECT id FROM Company WHERE company_name = '{Globals.currentCompany}'";
             DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            int company_id = 0;
+            if(results.Rows.Count > 0)
+            {
+                foreach(DataRow row in results.Rows)
+                {
+                    company_id = row.Field<int>("id");
+                }
+            }
+
+            string name = "";
             do
             {
                 Console.WriteLine("Enter Project Name:");
                 name = Console.ReadLine();
             } while (DoesProjectExist(name));
 
-            string sql = $"INSERT INTO Project (project_name, is_active) VALUES ('{name}', 1)";
+            sql = $"INSERT INTO Project (company_id, project_name, is_active) VALUES ({company_id}, '{name}', 1)";
 
             data.ConnectToDatabase();
             data.RunSQL(sql);
@@ -104,7 +114,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("Enter the ID for current project selection");
             string id = Console.ReadLine();
 
-            string sql = $"SELECT project_name FROM Project WHERE id = {id}";
+            string sql = $"SELECT P.id, P.project_name FROM Project P, Company C WHERE P.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND P.id = {id}";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -115,13 +125,14 @@ namespace BugTrackerCommandLine
                 foreach(DataRow row in results.Rows)
                 {
                     Globals.currentProject = row.Field<string>("project_name");
+                    Users.SetUserDefaultProject(row.Field<int>("id"));
                 }
             }
         }
 
         private static bool DoesProjectExist(string name)
         {
-            var sql = $"select project_name from Project WHERE project_name = '{name}';";
+            var sql = $"select P.project_name from Project P, Company C WHERE P.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND P.project_name = '{name}';";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();

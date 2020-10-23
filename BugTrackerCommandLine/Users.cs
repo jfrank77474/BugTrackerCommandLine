@@ -54,7 +54,7 @@ namespace BugTrackerCommandLine
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("List Users");
 
-            var sql = "select id, user_name, display_name, email, is_active from Users;";
+            var sql = $"select U.id, U.user_name, U.display_name, U.email, U.is_active from Users U, Company C WHERE U.company_id = C.id AND C.company_name = '{Globals.currentCompany}';";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -83,12 +83,26 @@ namespace BugTrackerCommandLine
 
         private static void CreateUser()
         {
+            // @TODO check to see if currently logged in user is admin if not check to see if there are any users in company
+            //       if 0 users in current company then create user and give admin rights
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Create a new User");
 
-            string name = "", display_name, email, password;
-
+            string sql = $"SELECT id FROM Company Where company_name = '{Globals.currentCompany}'";
             DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            int company_id = 0;
+            if(results.Rows.Count > 0)
+            {
+                foreach(DataRow row in results.Rows)
+                {
+                    company_id = row.Field<int>("id");
+                }
+            }
+
+            string name = "", display_name, email, password;
             do
             {
                 Console.WriteLine("Enter User Name:");
@@ -106,7 +120,7 @@ namespace BugTrackerCommandLine
 
             string encryptedPw = EncryptionDecryptionService.Encrypt(data.getResource("key"), password);
 
-            string sql = $"INSERT INTO Users (user_name, display_name, email, password, is_active) VALUES  ('{name}', '{display_name}', '{email}', '{encryptedPw}', 1)";
+            sql = $"INSERT INTO Users (company_id, user_name, display_name, email, password, is_active) VALUES  ('{company_id}', '{name}', '{display_name}', '{email}', '{encryptedPw}', 1)";
 
             data.ConnectToDatabase();
             data.RunSQL(sql);
@@ -125,18 +139,19 @@ namespace BugTrackerCommandLine
             Console.WriteLine("Enter the ID you want to modify:");
             string id = Console.ReadLine();
 
-            string sql = $"select id, user_name, display_name, email, is_active from Users WHERE id = {id}";
-            Console.WriteLine(sql);
+            string sql = $"select U.id, U.company_id, U.user_name, U.display_name, U.email, U.is_active from Users U, Company C WHERE U.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND U.id = {id}";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
             var results = data.RunSQL(sql);
 
             string old_name = "", old_display_name = "", old_email = "";
+            int company_id = 0;
             if (results.Rows.Count > 0)
             {
                 foreach (DataRow row in results.Rows)
                 {
+                    company_id = row.Field<int>("company_id");
                     old_name = row.Field<string>("user_name");
                     old_display_name = row.Field<string>("display_name");
                     old_email = row.Field<string>("email");
@@ -177,7 +192,7 @@ namespace BugTrackerCommandLine
             else
                 is_active = false;
 
-            sql = $"update Users set user_name='{name}', display_name='{display_name}', email='{email}', password='{encryptedPw}', is_active={is_active} WHERE id = {id}";
+            sql = $"update Users set user_name='{name}', display_name='{display_name}', email='{email}', password='{encryptedPw}', is_active={is_active} WHERE id = {id} AND company_id = {company_id}";
             data.ConnectToDatabase();
             data.RunSQL(sql);
 
@@ -200,7 +215,7 @@ namespace BugTrackerCommandLine
 
             if (answer.ToLower() == "y")
             {
-                string sql = $"DELETE FROM Users WHERE id = {id}";
+                string sql = $"DELETE FROM Users U, Company C WHERE U.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND U.id = {id}";
 
                 DataEntry data = new DataEntry();
                 data.ConnectToDatabase();
@@ -213,7 +228,7 @@ namespace BugTrackerCommandLine
 
         public static bool DoesUserExist(string name)
         {
-            var sql = $"select user_name from Users WHERE user_name = '{name}';";
+            var sql = $"select user_name from Users U, Company C WHERE U.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND U.user_name = '{name}';";
 
             DataEntry data = new DataEntry();
             data.ConnectToDatabase();
@@ -223,6 +238,34 @@ namespace BugTrackerCommandLine
                 return true;
             else
                 return false;
+        }
+        
+        public static void SetUserDefaultProject(int project_id)
+        {
+            DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+
+            string sql = $"update Users U, Company C set default_active_project='{project_id}' WHERE U.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND U.user_name = '{Globals.currentUser}'";
+            data.ConnectToDatabase();
+            data.RunSQL(sql);
+        }
+
+        public static void GetUserDefaultProject()
+        {
+            DataEntry data = new DataEntry();
+            data.ConnectToDatabase();
+
+            string sql = $"SELECT P.project_name FROM Project P, Users U, Company C WHERE P.id = U.default_active_project AND U.company_id = C.id AND C.company_name = '{Globals.currentCompany}' AND U.user_name = '{Globals.currentUser}'";
+            data.ConnectToDatabase();
+            var results = data.RunSQL(sql);
+
+            if (results.Rows.Count > 0)
+            {
+                foreach(DataRow row in results.Rows)
+                {
+                    Globals.currentProject = row.Field<string>("project_name");
+                }
+            }
         }
     }
 }

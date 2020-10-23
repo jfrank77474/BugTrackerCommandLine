@@ -16,7 +16,8 @@ namespace BugTrackerCommandLine
         NewCompany,
         List,
         NewTicket,
-        Status
+        Status,
+        Quit
     };
 
     public class Globals
@@ -24,6 +25,7 @@ namespace BugTrackerCommandLine
         public static Stack<Menus> currentMenu = new Stack<Menus>();
         public static string currentProject = null;
         public static string currentCompany = null;
+        public static string currentUser = null;
     }
 
     // @TODO set up company for user/projects/tickets
@@ -67,6 +69,9 @@ namespace BugTrackerCommandLine
                         break;
                     case Menus.List:
                         Ticket.ListTickets();
+                        break;
+                    case Menus.Quit:
+                        Environment.Exit(0);
                         break;
                 }
             }
@@ -124,8 +129,15 @@ namespace BugTrackerCommandLine
 
         static void Login()
         {
-            Console.WriteLine("Company?");
+            Console.WriteLine("Company? (quit to exit)");
             string c = Console.ReadLine();
+
+            if (c.ToLower() == "quit")
+            {
+                Globals.currentMenu.Push(Menus.Quit);
+                return;
+            }
+
             if (!Company.DoesCompanyExist(c))
             {
                 // No company found need to create new one
@@ -138,9 +150,17 @@ namespace BugTrackerCommandLine
                     Globals.currentMenu.Push(Menus.NewCompany);
                 return;
             }
+            Globals.currentCompany = c;
 
-            Console.WriteLine("User Name?");
+            Console.WriteLine("User Name? (quit to exit)");
             string u = Console.ReadLine();
+
+            if (u.ToLower() == "quit")
+            {
+                Globals.currentMenu.Push(Menus.Quit);
+                return;
+            }
+
             if (!Users.DoesUserExist(u))
             {
                 Console.WriteLine("");
@@ -152,6 +172,7 @@ namespace BugTrackerCommandLine
                     Globals.currentMenu.Push(Menus.NewUser);
                 return;
             }
+            Globals.currentUser = u;
 
             Console.WriteLine("Password");
             string p = "";
@@ -192,7 +213,7 @@ namespace BugTrackerCommandLine
                 // @TODO change this to use the password as the key and have it encrypted to the current key
                 if (EncryptionDecryptionService.Encrypt(data.getResource("key"), p) == encryptedPW)
                 {
-                    Globals.currentCompany = c;
+                    Users.GetUserDefaultProject();
                     Globals.currentMenu.Push(Menus.Main);
                 }
                 else

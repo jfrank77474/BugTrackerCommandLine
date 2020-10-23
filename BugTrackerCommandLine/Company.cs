@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 
-// @TODO change the company/project globals to work with resources instead
 namespace BugTrackerCommandLine
 {
     public class Company

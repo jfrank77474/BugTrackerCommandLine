@@ -3,7 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugTrackerCommandLine", "BugTrackerCommandLine\BugTrackerCommandLine.csproj", "{38591E44-5E57-43C9-B77D-DC8EE8A9DBC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BugTrackerCommandLine", "BugTrackerCommandLine\BugTrackerCommandLine.csproj", "{38591E44-5E57-43C9-B77D-DC8EE8A9DBC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Create Scripts", "SQL Create Scripts", "{73EDD8BE-E5D2-4941-A0E8-6B8440645BD2}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\BugTracker SQL\Boards.sql = ..\..\..\Desktop\BugTracker SQL\Boards.sql
+		..\..\..\Desktop\BugTracker SQL\Catagory.sql = ..\..\..\Desktop\BugTracker SQL\Catagory.sql
+		..\..\..\Desktop\BugTracker SQL\Comment.sql = ..\..\..\Desktop\BugTracker SQL\Comment.sql
+		..\..\..\Desktop\BugTracker SQL\Company.sql = ..\..\..\Desktop\BugTracker SQL\Company.sql
+		..\..\..\Desktop\BugTracker SQL\Group.sql = ..\..\..\Desktop\BugTracker SQL\Group.sql
+		..\..\..\Desktop\BugTracker SQL\Project.sql = ..\..\..\Desktop\BugTracker SQL\Project.sql
+		..\..\..\Desktop\BugTracker SQL\Status.sql = ..\..\..\Desktop\BugTracker SQL\Status.sql
+		..\..\..\Desktop\BugTracker SQL\Ticket.sql = ..\..\..\Desktop\BugTracker SQL\Ticket.sql
+		..\..\..\Desktop\BugTracker SQL\Type.sql = ..\..\..\Desktop\BugTracker SQL\Type.sql
+		..\..\..\Desktop\BugTracker SQL\User.sql = ..\..\..\Desktop\BugTracker SQL\User.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

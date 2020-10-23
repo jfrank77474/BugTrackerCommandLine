@@ -1,0 +1,7 @@
+﻿CREATE TABLE Groups (
+	id INT NOT NULL AUTO_INCREMENT,
+	user_id INT NULL,
+	project_id INT NULL,
+	is_admin BOOLEAN DEFAULT FALSE,
+	PRIMARY KEY (id)
+);

@@ -7,16 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BugTrackerCommandLine", "Bu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Create Scripts", "SQL Create Scripts", "{73EDD8BE-E5D2-4941-A0E8-6B8440645BD2}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Desktop\BugTracker SQL\Boards.sql = ..\..\..\Desktop\BugTracker SQL\Boards.sql
-		..\..\..\Desktop\BugTracker SQL\Catagory.sql = ..\..\..\Desktop\BugTracker SQL\Catagory.sql
-		..\..\..\Desktop\BugTracker SQL\Comment.sql = ..\..\..\Desktop\BugTracker SQL\Comment.sql
-		..\..\..\Desktop\BugTracker SQL\Company.sql = ..\..\..\Desktop\BugTracker SQL\Company.sql
-		..\..\..\Desktop\BugTracker SQL\Group.sql = ..\..\..\Desktop\BugTracker SQL\Group.sql
-		..\..\..\Desktop\BugTracker SQL\Project.sql = ..\..\..\Desktop\BugTracker SQL\Project.sql
-		..\..\..\Desktop\BugTracker SQL\Status.sql = ..\..\..\Desktop\BugTracker SQL\Status.sql
-		..\..\..\Desktop\BugTracker SQL\Ticket.sql = ..\..\..\Desktop\BugTracker SQL\Ticket.sql
-		..\..\..\Desktop\BugTracker SQL\Type.sql = ..\..\..\Desktop\BugTracker SQL\Type.sql
-		..\..\..\Desktop\BugTracker SQL\User.sql = ..\..\..\Desktop\BugTracker SQL\User.sql
+		BugTracker SQL\Boards.sql = BugTracker SQL\Boards.sql
+		BugTracker SQL\Catagory.sql = BugTracker SQL\Catagory.sql
+		BugTracker SQL\Comment.sql = BugTracker SQL\Comment.sql
+		BugTracker SQL\Company.sql = BugTracker SQL\Company.sql
+		BugTracker SQL\Group.sql = BugTracker SQL\Group.sql
+		BugTracker SQL\Project.sql = BugTracker SQL\Project.sql
+		BugTracker SQL\Status.sql = BugTracker SQL\Status.sql
+		BugTracker SQL\Ticket.sql = BugTracker SQL\Ticket.sql
+		BugTracker SQL\Type.sql = BugTracker SQL\Type.sql
+		BugTracker SQL\User.sql = BugTracker SQL\User.sql
 	EndProjectSection
 EndProject
 Global

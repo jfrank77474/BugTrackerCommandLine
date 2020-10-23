@@ -1,0 +1,8 @@
+﻿CREATE TABLE Status (
+	id INT NOT NULL AUTO_INCREMENT,
+	default_name VARCHAR(100) NULL,
+	user_named VARCHAR(100) NULL,
+	is_active BOOLEAN DEFAULT FALSE,
+	sort_order INT DEFAULT 0,
+	PRIMARY KEY (id)
+);
